@@ -150,10 +150,22 @@ class State:
                     self.reset()
                     break
 
-    #  TODO:
     def show_board(self):
-        pass
+        # Player One: x     Player Two: o
+        for i in range(0, BOARD_ROWS):
+            print("-------------")
+            out = '| '
+            for j in range(0, BOARD_COLUMNS):
+                if self.board[i, j] == 1:
+                    token = "x"
+                if self.board[i, j] == -1:
+                    token = "o"
+                if self.board[i, j] == 0:
+                    token = " "
+                out += token + ' | '
+            print(out)
+        print("-------------")
 
 
 s = State("x", "y")
-print(s.get_hash())
+print(s.show_board())
