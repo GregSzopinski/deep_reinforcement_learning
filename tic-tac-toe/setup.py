@@ -120,8 +120,38 @@ class State:
                         self.reset()
                         break
 
-    # TODO:
     def play_with_human(self):
+        while not self.is_end:
+            # Player One
+            positions = self.available_positions()
+            player_one_action = self.player_one.choose_action(positions, self.board, self.player_symbol)
+            self.update_state(player_one_action)
+            self.show_board()
+            # check board status
+            win = self.winner()
+            if win is not None:
+                if win == 1:
+                    print(f"{self.player_one.name} wins!")
+                else:
+                    print("It's a tie!")
+                self.reset()
+                break
+            else:
+                positions = self.available_positions()
+                player_two_action = self.player_two.choose_action(positions, self.board, self.player_symbol)
+                self.update_state(player_two_action)
+                self.show_board()
+                win = self.winner()
+                if win is not None:
+                    if win == -1:
+                        print(f"{self.player_two.name} wins!")
+                    else:
+                        print("It's a tie!")
+                    self.reset()
+                    break
+
+    #  TODO:
+    def show_board(self):
         pass
 
 
