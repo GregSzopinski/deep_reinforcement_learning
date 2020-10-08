@@ -1,6 +1,6 @@
 import numpy as np
 import pickle
-from constants import BOARD_ROWS, BOARD_COLUMNS
+from constants import BOARD_ROWS, BOARD_COLUMNS, ROUNDS
 
 
 class State:
@@ -78,9 +78,47 @@ class State:
         self.is_end = False
         self.player_symbol = 1
 
-    # TODO:
-    def play_with_cpu(self):
-        pass
+    def play_with_ai(self, rounds=ROUNDS):
+        for i in range(rounds):
+            if i % 1000 == 0:
+                print(f"Rounds {i}")
+            while not self.is_end:
+                # Player One
+                positions = self.available_positions()
+                player_one_action = self.player_one.choose_action(positions, self.board, self.player_symbol)
+                # action -> update (board) state
+                self.update_state(player_one_action)
+                board_hash = self.get_hash()
+                self.player_one.add_state(board_hash)
+                # check board status if it is an end
+
+                win = self.winner()
+                if win is not None:
+                    self.show_board()
+                    # if player one won the game or there was a draw
+                    self.give_reward()
+                    self.player_one.reset()
+                    self.player_two.reset()
+                    self.reset()
+                    break
+
+                else:
+                    # Player Two
+                    positions = self.available_positions()
+                    player_two_action = self.player_two.choose_action(positions, self.board, self.player_symbol)
+                    # same logic as above - update state in consequence of an action
+                    self.update_state(player_two_action)
+                    board_hash = self.get_hash()
+                    self.player_two.add_state(board_hash)
+
+                    win = self.winner()
+                    if win is not None:
+                        self.show_board()
+                        self.give_reward()
+                        self.player_one.reset()
+                        self.player_two.reset()
+                        self.reset()
+                        break
 
     # TODO:
     def play_with_human(self):
@@ -89,5 +127,3 @@ class State:
 
 s = State("x", "y")
 print(s.get_hash())
-
-
