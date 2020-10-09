@@ -1,6 +1,5 @@
 import json
 import pickle
-
 import numpy as np
 
 with open('settings.json') as settings_file:
@@ -48,8 +47,8 @@ class ComputerPlayer:
         for st in reversed(self.states):
             if self.states_value.get(st) is None:
                 self.states_value[st] = 0
-            self.states_value[st] += self.lr * (self.decay_gamma * reward - self.states_value[st])
             reward = self.states_value[st]
+            self.states_value[st] += self.lr * (self.decay_gamma * reward - self.states_value[st])
 
     def reset(self):
         self.states = []
@@ -65,6 +64,27 @@ class ComputerPlayer:
         fr.close()
 
 
-# TODO: define human player
 class HumanPlayer:
-    pass
+    def __init__(self, name):
+        self.name = name
+
+    def choose_action(self, positions):
+        while True:
+            print("Your move.")
+            row = int(input("Choose row:"))
+            col = int(input("Choose column"))
+            action = (row, col)
+            if action in positions:
+                return action
+
+    # append a hash state
+    def add_state(self, state):
+        pass
+
+    # at the end of the game, backpropagate and update states value
+    def feed_reward(self, reward):
+        pass
+
+    def reset(self):
+        pass
+
