@@ -1,0 +1,12 @@
+{
+  "GAME_SETTINGS": {
+    "BOARD_ROWS": 3,
+    "BOARD_COLUMNS": 3,
+    "ROUNDS": 100
+  },
+  "PARAMETERS": {
+    "EXP_RATE": 0.3,
+    "LEARNING_RATE": 0.2,
+    "DECAY_GAMMA": 0.9
+  }
+}

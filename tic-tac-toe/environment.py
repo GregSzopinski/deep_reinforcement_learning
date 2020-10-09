@@ -1,5 +1,11 @@
 import numpy as np
-from settings import BOARD_ROWS, BOARD_COLUMNS, ROUNDS
+import json
+
+with open('settings.json') as settings_file:
+    settings = json.load(settings_file)['GAME_SETTINGS']
+BOARD_ROWS = settings['BOARD_ROWS']
+BOARD_COLUMNS = settings['BOARD_COLUMNS']
+ROUNDS = settings['ROUNDS']
 
 
 class State:
