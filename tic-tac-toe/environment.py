@@ -1,6 +1,5 @@
 import numpy as np
-import pickle
-from constants import BOARD_ROWS, BOARD_COLUMNS, ROUNDS
+from settings import BOARD_ROWS, BOARD_COLUMNS, ROUNDS
 
 
 class State:
@@ -152,6 +151,8 @@ class State:
 
     def show_board(self):
         # Player One: x     Player Two: o
+        # Declare 'default' token here to avoid bugs with conditionals
+        token = " "
         for i in range(0, BOARD_ROWS):
             print("-------------")
             out = '| '
@@ -160,8 +161,9 @@ class State:
                     token = "x"
                 if self.board[i, j] == -1:
                     token = "o"
+                # keep token as 'space' string
                 if self.board[i, j] == 0:
-                    token = " "
+                    pass
                 out += token + ' | '
             print(out)
         print("-------------")
