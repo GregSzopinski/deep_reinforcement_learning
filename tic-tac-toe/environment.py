@@ -37,25 +37,26 @@ class State:
             if sum(self.board[:, i]) == -3:
                 self.is_end = True
                 return -1
-        # # diagonal
-        # if np.trace(self.board) == 3 or np.trace(np.fliplr(self.board)) == 3:
-        #     self.is_end = True
-        #     return 1
-        # # anti-diagonal
-        # if np.trace(self.board) == -3 or np.trace(np.fliplr(self.board)) == -3:
-        #     self.is_end = True
-        #     return -1
 
         # diagonal
-        diag_sum1 = sum([self.board[i, i] for i in range(BOARD_COLUMNS)])
-        diag_sum2 = sum([self.board[i, BOARD_COLUMNS - i - 1] for i in range(BOARD_COLUMNS)])
-        diag_sum = max(abs(diag_sum1), abs(diag_sum2))
-        if diag_sum == 3:
+        if np.trace(self.board) == 3 or np.trace(np.fliplr(self.board)) == 3:
             self.is_end = True
-            if diag_sum1 == 3 or diag_sum2 == 3:
-                return 1
-            else:
-                return -1
+            return 1
+        # anti-diagonal
+        if np.trace(self.board) == -3 or np.trace(np.fliplr(self.board)) == -3:
+            self.is_end = True
+            return -1
+
+        # # diagonal
+        # diag_sum1 = sum([self.board[i, i] for i in range(BOARD_COLUMNS)])
+        # diag_sum2 = sum([self.board[i, BOARD_COLUMNS - i - 1] for i in range(BOARD_COLUMNS)])
+        # diag_sum = max(abs(diag_sum1), abs(diag_sum2))
+        # if diag_sum == 3:
+        #     self.is_end = True
+        #     if diag_sum1 == 3 or diag_sum2 == 3:
+        #         return 1
+        #     else:
+        #         return -1
 
         # tie - no available positions
         if len(self.available_positions()) == 0:
@@ -167,6 +168,7 @@ class State:
                     self.reset()
                     break
 
+    # TODO: custom board (e.g. 5 x 5) - settings and interface
     def show_board(self):
         # p1: x  p2: o
         for i in range(0, BOARD_ROWS):
