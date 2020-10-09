@@ -2,12 +2,13 @@ import json
 import pickle
 import numpy as np
 
-with open('settings.json') as settings_file:
-    params = json.load(settings_file)['PARAMETERS']
-    settings = json.load(settings_file)['GAME_SETTINGS']
-    BOARD_ROWS = settings['BOARD_ROWS']
-    BOARD_COLUMNS = settings['BOARD_COLUMNS']
-    ROUNDS = settings['ROUNDS']
+with open('settings.json') as file:
+    settings_file = json.load(file)
+    params = settings_file['PARAMETERS']
+    settings = settings_file['GAME_SETTINGS']
+BOARD_ROWS = settings['BOARD_ROWS']
+BOARD_COLUMNS = settings['BOARD_COLUMNS']
+ROUNDS = settings['ROUNDS']
 
 
 class ComputerPlayer:
@@ -37,18 +38,18 @@ class ComputerPlayer:
                 if value >= value_max:
                     value_max = value
                     action = p
-        print(f"{self.name} takes action: {action}")
+        # print(f"{self.name} takes action: {action}")
         return action
 
     def add_state(self, state):
         self.states.append(state)
 
-    def feed_reward(self):
+    def feed_reward(self, reward):
         for st in reversed(self.states):
             if self.states_value.get(st) is None:
                 self.states_value[st] = 0
-            reward = self.states_value[st]
             self.states_value[st] += self.lr * (self.decay_gamma * reward - self.states_value[st])
+            reward = self.states_value[st]
 
     def reset(self):
         self.states = []
@@ -58,8 +59,8 @@ class ComputerPlayer:
         pickle.dump(self.states_value, fw)
         fw.close()
 
-    def load_policy(self, file):
-        fr = open(file, 'rb')
+    def load_policy(self, policy_file):
+        fr = open(policy_file, 'rb')
         self.states_value = pickle.load(fr)
         fr.close()
 
@@ -71,8 +72,8 @@ class HumanPlayer:
     def choose_action(self, positions):
         while True:
             print("Your move.")
-            row = int(input("Choose row:"))
-            col = int(input("Choose column"))
+            row = int(input("Choose row: "))
+            col = int(input("Choose column: "))
             action = (row, col)
             if action in positions:
                 return action

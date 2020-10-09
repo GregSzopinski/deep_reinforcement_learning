@@ -22,7 +22,7 @@ class State:
         return self.board_hash
 
     def winner(self):
-        for i in BOARD_ROWS:
+        for i in range(BOARD_ROWS):
             if sum(self.board[i, :]) == 3:
                 self.is_end = True
                 return 1
@@ -30,21 +30,32 @@ class State:
                 self.is_end = True
                 return -1
 
-        for i in BOARD_COLUMNS:
+        for i in range(BOARD_COLUMNS):
             if sum(self.board[:, i]) == 3:
                 self.is_end = True
                 return 1
             if sum(self.board[:, i]) == -3:
                 self.is_end = True
                 return -1
+        # # diagonal
+        # if np.trace(self.board) == 3 or np.trace(np.fliplr(self.board)) == 3:
+        #     self.is_end = True
+        #     return 1
+        # # anti-diagonal
+        # if np.trace(self.board) == -3 or np.trace(np.fliplr(self.board)) == -3:
+        #     self.is_end = True
+        #     return -1
+
         # diagonal
-        if np.trace(self.board) == 3 or np.trace(np.fliplr(self.board)) == 3:
+        diag_sum1 = sum([self.board[i, i] for i in range(BOARD_COLUMNS)])
+        diag_sum2 = sum([self.board[i, BOARD_COLUMNS - i - 1] for i in range(BOARD_COLUMNS)])
+        diag_sum = max(abs(diag_sum1), abs(diag_sum2))
+        if diag_sum == 3:
             self.is_end = True
-            return 1
-        # anti-diagonal
-        if np.trace(self.board) == -3 or np.trace(np.fliplr(self.board)) == -3:
-            self.is_end = True
-            return -1
+            if diag_sum1 == 3 or diag_sum2 == 3:
+                return 1
+            else:
+                return -1
 
         # tie - no available positions
         if len(self.available_positions()) == 0:
@@ -67,6 +78,7 @@ class State:
 
     def give_reward(self):
         result = self.winner()
+        # backprop reward
         if result == 1:
             self.player_one.feed_reward(1)
             self.player_two.feed_reward(0)
@@ -99,7 +111,7 @@ class State:
 
                 win = self.winner()
                 if win is not None:
-                    self.show_board()
+                    # self.show_board()
                     # if player one won the game or there was a draw
                     self.give_reward()
                     self.player_one.reset()
@@ -118,7 +130,7 @@ class State:
 
                     win = self.winner()
                     if win is not None:
-                        self.show_board()
+                        # self.show_board()
                         self.give_reward()
                         self.player_one.reset()
                         self.player_two.reset()
@@ -143,7 +155,7 @@ class State:
                 break
             else:
                 positions = self.available_positions()
-                player_two_action = self.player_two.choose_action(positions, self.board, self.player_symbol)
+                player_two_action = self.player_two.choose_action(positions)
                 self.update_state(player_two_action)
                 self.show_board()
                 win = self.winner()
@@ -156,24 +168,18 @@ class State:
                     break
 
     def show_board(self):
-        # Player One: x     Player Two: o
-        # Declare 'default' token here to avoid bugs with conditionals
-        token = " "
+        # p1: x  p2: o
         for i in range(0, BOARD_ROWS):
-            print("-------------")
+            print('-------------')
             out = '| '
             for j in range(0, BOARD_COLUMNS):
                 if self.board[i, j] == 1:
-                    token = "x"
+                    token = 'x'
                 if self.board[i, j] == -1:
-                    token = "o"
-                # keep token as 'space' string
+                    token = 'o'
                 if self.board[i, j] == 0:
-                    pass
+                    token = ' '
                 out += token + ' | '
             print(out)
-        print("-------------")
+        print('-------------')
 
-
-s = State("x", "y")
-print(s.show_board())
