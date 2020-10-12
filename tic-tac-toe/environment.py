@@ -1,11 +1,11 @@
 import numpy as np
 import json
 
-with open('settings.json') as settings_file:
-    settings = json.load(settings_file)['GAME_SETTINGS']
-BOARD_ROWS = settings['BOARD_ROWS']
-BOARD_COLUMNS = settings['BOARD_COLUMNS']
-ROUNDS = settings['ROUNDS']
+with open("settings.json") as settings_file:
+    settings = json.load(settings_file)["GAME_SETTINGS"]
+BOARD_ROWS = settings["BOARD_ROWS"]
+BOARD_COLUMNS = settings["BOARD_COLUMNS"]
+ROUNDS = settings["ROUNDS"]
 
 
 class State:
@@ -47,17 +47,6 @@ class State:
             self.is_end = True
             return -1
 
-        # # diagonal
-        # diag_sum1 = sum([self.board[i, i] for i in range(BOARD_COLUMNS)])
-        # diag_sum2 = sum([self.board[i, BOARD_COLUMNS - i - 1] for i in range(BOARD_COLUMNS)])
-        # diag_sum = max(abs(diag_sum1), abs(diag_sum2))
-        # if diag_sum == 3:
-        #     self.is_end = True
-        #     if diag_sum1 == 3 or diag_sum2 == 3:
-        #         return 1
-        #     else:
-        #         return -1
-
         # tie - no available positions
         if len(self.available_positions()) == 0:
             self.is_end = True
@@ -79,7 +68,7 @@ class State:
 
     def give_reward(self):
         result = self.winner()
-        # backprop reward
+        # backpropagate reward
         if result == 1:
             self.player_one.feed_reward(1)
             self.player_two.feed_reward(0)
@@ -103,7 +92,9 @@ class State:
             while not self.is_end:
                 # Player One
                 positions = self.available_positions()
-                player_one_action = self.player_one.choose_action(positions, self.board, self.player_symbol)
+                player_one_action = self.player_one.choose_action(
+                    positions, self.board, self.player_symbol
+                )
                 # action -> update (board) state
                 self.update_state(player_one_action)
                 board_hash = self.get_hash()
@@ -123,7 +114,9 @@ class State:
                 else:
                     # Player Two
                     positions = self.available_positions()
-                    player_two_action = self.player_two.choose_action(positions, self.board, self.player_symbol)
+                    player_two_action = self.player_two.choose_action(
+                        positions, self.board, self.player_symbol
+                    )
                     # same logic as above - update state in consequence of an action
                     self.update_state(player_two_action)
                     board_hash = self.get_hash()
@@ -142,7 +135,9 @@ class State:
         while not self.is_end:
             # Player One
             positions = self.available_positions()
-            player_one_action = self.player_one.choose_action(positions, self.board, self.player_symbol)
+            player_one_action = self.player_one.choose_action(
+                positions, self.board, self.player_symbol
+            )
             self.update_state(player_one_action)
             self.show_board()
             # check board status
@@ -172,16 +167,15 @@ class State:
     def show_board(self):
         # p1: x  p2: o
         for i in range(0, BOARD_ROWS):
-            print('-------------')
-            out = '| '
+            print("-------------")
+            out = "| "
             for j in range(0, BOARD_COLUMNS):
                 if self.board[i, j] == 1:
-                    token = 'x'
+                    token = "x"
                 if self.board[i, j] == -1:
-                    token = 'o'
+                    token = "o"
                 if self.board[i, j] == 0:
-                    token = ' '
-                out += token + ' | '
+                    token = " "
+                out += token + " | "
             print(out)
-        print('-------------')
-
+        print("-------------")
