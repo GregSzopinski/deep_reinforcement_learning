@@ -2,22 +2,22 @@ import json
 import pickle
 import numpy as np
 
-with open('settings.json') as file:
+with open("settings.json") as file:
     settings_file = json.load(file)
-    params = settings_file['PARAMETERS']
-    settings = settings_file['GAME_SETTINGS']
-BOARD_ROWS = settings['BOARD_ROWS']
-BOARD_COLUMNS = settings['BOARD_COLUMNS']
-ROUNDS = settings['ROUNDS']
+    params = settings_file["PARAMETERS"]
+    settings = settings_file["GAME_SETTINGS"]
+BOARD_ROWS = settings["BOARD_ROWS"]
+BOARD_COLUMNS = settings["BOARD_COLUMNS"]
+ROUNDS = settings["ROUNDS"]
 
 
 class ComputerPlayer:
-    def __init__(self, name, exp_rate=params['EXP_RATE']):
+    def __init__(self, name, exp_rate=params["EXP_RATE"]):
         self.name = name
         self.states = []
         self.exp_rate = exp_rate
-        self.lr = params['LEARNING_RATE']
-        self.decay_gamma = params['DECAY_GAMMA']
+        self.lr = params["LEARNING_RATE"]
+        self.decay_gamma = params["DECAY_GAMMA"]
         self.states_value = {}  # state -> value
 
     def get_hash(self, board):
@@ -34,7 +34,11 @@ class ComputerPlayer:
                 next_board = current_board.copy()
                 next_board[p] = symbol
                 next_board_hash = self.get_hash(next_board)
-                value = 0 if self.states_value.get(next_board_hash) is None else self.states_value.get(next_board_hash)
+                value = (
+                    0
+                    if self.states_value.get(next_board_hash) is None
+                    else self.states_value.get(next_board_hash)
+                )
                 if value >= value_max:
                     value_max = value
                     action = p
@@ -48,19 +52,21 @@ class ComputerPlayer:
         for st in reversed(self.states):
             if self.states_value.get(st) is None:
                 self.states_value[st] = 0
-            self.states_value[st] += self.lr * (self.decay_gamma * reward - self.states_value[st])
+            self.states_value[st] += self.lr * (
+                self.decay_gamma * reward - self.states_value[st]
+            )
             reward = self.states_value[st]
 
     def reset(self):
         self.states = []
 
     def save_policy(self):
-        fw = open('policy_' + str(self.name), 'wb')
+        fw = open("policy_" + str(self.name), "wb")
         pickle.dump(self.states_value, fw)
         fw.close()
 
     def load_policy(self, policy_file):
-        fr = open(policy_file, 'rb')
+        fr = open(policy_file, "rb")
         self.states_value = pickle.load(fr)
         fr.close()
 
@@ -88,4 +94,3 @@ class HumanPlayer:
 
     def reset(self):
         pass
-
