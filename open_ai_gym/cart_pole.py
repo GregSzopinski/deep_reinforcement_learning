@@ -1,9 +1,16 @@
 import gym
-
 env = gym.make('CartPole-v0')
-env.reset()
-for _ in range(1000):
-    env.render()
-    # take a random action
-    env.step(env.action_space.sample())
+
+
+for i_episode in range(20):
+    observation = env.reset()
+    for time_step in range(100):
+        env.render()
+        print(observation)
+        # take a random action
+        action = env.action_space.sample()
+        observation, reward, done, info = env.step(action)
+        if done:
+            print(f"Episode finished after {time_step+1} time steps")
+            break
 env.close()
